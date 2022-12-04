@@ -7,36 +7,35 @@ func main() {
 }
 
 func threeSum(nums []int) [][]int {
-	n := len(nums)
-	sort.Ints(nums)
 	ans := make([][]int, 0)
-
-	// 枚举 a
-	for first := 0; first < n; first++ {
-		// 需要和上一次枚举的数不相同
-		if first > 0 && nums[first] == nums[first-1] {
+	if nums == nil || len(nums) < 3 {
+		return ans
+	}
+	sort.Ints(nums)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] > 0 {
+			break
+		}
+		if i > 0 && nums[i-1] == nums[i] {
 			continue
 		}
-		// c 对应的指针初始指向数组的最右端
-		third := n - 1
-		target := -1 * nums[first]
-		// 枚举 b
-		for second := first + 1; second < n; second++ {
-			// 需要和上一次枚举的数不相同
-			if second > first+1 && nums[second] == nums[second-1] {
-				continue
-			}
-			// 需要保证 b 的指针在 c 的指针的左侧
-			for second < third && nums[second]+nums[third] > target {
-				third--
-			}
-			// 如果指针重合，随着 b 后续的增加
-			// 就不会有满足 a+b+c=0 并且 b<c 的 c 了，可以退出循环
-			if second == third {
-				break
-			}
-			if nums[second]+nums[third] == target {
-				ans = append(ans, []int{nums[first], nums[second], nums[third]})
+		left := i + 1
+		right := len(nums) - 1
+		for left < right {
+			if nums[left]+nums[right]+nums[i] == 0 {
+				ans = append(ans, []int{nums[left], nums[right], nums[i]})
+				for left < right && nums[left] == nums[left+1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
+				left++
+				right--
+			} else if nums[left]+nums[right]+nums[i] < 0 {
+				left++
+			} else {
+				right--
 			}
 		}
 	}
